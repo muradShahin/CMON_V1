@@ -25,6 +25,7 @@ export default function EOD({navigation}){
   const testArr = [
     {
         id:1,
+        date:'Monday 26',
         activities:[
             {
                 act:55,
@@ -52,6 +53,7 @@ export default function EOD({navigation}){
     },
     {
         id:2,
+        date:'Tuesday 27',
         activities:[
             {
                 act:11,
@@ -69,6 +71,7 @@ export default function EOD({navigation}){
     },
     {
         id:3,
+        date:'wednesday 27',
         activities:[
             {
                 act:14,
@@ -157,7 +160,7 @@ export default function EOD({navigation}){
                                 <View style={styles.internal_view}>
                                    
                                     <View style={styles.widget_header}>
-                                        <Text style={styles.widget_txt}>Monday 26</Text>
+                                        <Text style={styles.widget_txt}>{element.date}</Text>
                                         <View style={styles.line}></View>
                                     </View>
                                      {/** this block should be in loop */}

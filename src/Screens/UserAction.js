@@ -4,7 +4,7 @@ import { StyleSheet ,Dimensions,Image,StatusBar} from "react-native";
 import { View } from "react-native";
 import { TouchableOpacity } from "react-native";
 //icons
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Foundation from 'react-native-vector-icons/Foundation';
 import Feather from 'react-native-vector-icons/Feather';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
@@ -78,7 +78,33 @@ function markAs(value){
                 </RadioButton.Group>
            </View>
         )
+    
     }
+}
+
+
+function hold(value){
+    
+        if(value ==='Hold'){
+
+        return( <View style={styles.hold_date}>
+            
+               
+                        <FontAwesome5  name={'calendar-alt'} size={20} color={'#29b6f6'} style={styles.date_icon}/>
+                        <Text style={styles.date_title}>Tell When:</Text>
+                        <TextInput
+                            style={styles.input2}
+                            onChangeText={onChangeText}
+                            value={text}
+                            placeholder="Dd/mm/yyyy"
+                        />
+                
+            </View>
+
+        );
+
+
+        }
 }
 
 
@@ -150,10 +176,13 @@ function markAs(value){
                                {/** headers */}
                                <View style={styles.header_action}>
                                     <Text style={styles.rows_txt_other}>User Actions</Text>
-                                        <View style={styles.cancel_btn}>
+                                        <TouchableOpacity style={styles.cancel_btn} onPress={()=>{
+                                            setValue('');
+                                            setValue_2('');
+                                        }}>
                                             <Feather style={styles.note_icon} name={'x'} size={20} color={'#000a12'}/>
                                             <Text style={styles.cancel_txt}>clear selection</Text>
-                                        </View>    
+                                        </TouchableOpacity>    
                             </View>
 
                             <View style={styles.radio_group}>
@@ -165,8 +194,9 @@ function markAs(value){
 
                                     <View style={styles.radio_item}>
                                         <RadioButton.Android value="Hold" color="#007ac1"/>
-                                        <Text style={styles.label_radio} >Hold</Text> 
+                                        <Text style={styles.label_radio}>Hold</Text> 
                                     </View>
+                                    {hold(value)}
 
                                     <View style={styles.radio_item}>
                                         <RadioButton.Android value="Mark as"  color="#007ac1"/>
@@ -384,12 +414,13 @@ const styles = StyleSheet.create({
     
     },radio_group:{
       
-       
+       width:'80%',
         alignItems:'flex-start',
         alignContent:'center',
         justifyContent:'flex-start',
         marginStart:20,
-        marginEnd:20
+        marginEnd:20,
+        
     
     },radio_item:{
         flexDirection:'row',
@@ -398,7 +429,7 @@ const styles = StyleSheet.create({
   
     },
     label_radio:{
-        width:100
+        width:250
     },modalBox: {
         overflow: "hidden",
         alignItems: "center",
@@ -433,6 +464,35 @@ const styles = StyleSheet.create({
        borderTopWidth:1,
        borderTopColor:'#bbdefb'
       },
+      hold_date:{
+        flexDirection:'row',
+        alignItems:'center',
+        alignContent:'center',
+        justifyContent:'center',
+       
+        marginStart:0
+
+      },
+      input2: {
+        
+        marginTop:10,
+        marginStart:5,
+        borderBottomWidth:2,
+        borderBottomColor:'#bbdefb',
+        
+        
+
+       },
+       date_icon:{
+        marginStart:0,
+        marginEnd:8
+       },
+       date_title:{
+        marginEnd:8,
+        fontWeight:'bold',
+        fontSize:12
+       }
+       
 
 
 });

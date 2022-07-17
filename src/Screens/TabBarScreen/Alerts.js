@@ -79,7 +79,7 @@ export default function Alerts({navigatio,AppState}){
 
     function getAlertsCount(){
 
-        return 2;
+        return 3;
     }
 
 
