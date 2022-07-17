@@ -140,7 +140,7 @@ export default function Home({navigation,AppState}){
               <Foundation  name={'info'} size={30} color={'#0077c2'}/>
                 <Text style={styles.UserActionRow_txt}>End Of The Day (EOD)</Text>
               </TouchableOpacity>
-              <TouchableOpacity  style={styles.UserActionRow_last} onPress={()=> navigation.navigate('MajorIncidents')}>
+              <TouchableOpacity  style={styles.UserActionRow_last} onPress={()=> navigation.navigate('Settings')}>
               <Foundation  name={'info'} size={30} color={'#0077c2'}/>
                 <Text style={styles.UserActionRow_txt}>Settings</Text>
               </TouchableOpacity>

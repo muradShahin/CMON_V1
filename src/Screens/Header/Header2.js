@@ -6,13 +6,16 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import { StackActions } from "@react-navigation/native";
 import Foundation from 'react-native-vector-icons/Foundation';
-
+import { Atom, useAtom } from "jotai";
+import { userActionVisibility } from "../../GlobalState/atom";
 
 export default function Header2({navigation,title}){
    
     const popAction = StackActions.pop(1);
+    const [menuVis,setVis] =useAtom(userActionVisibility);
 
     function HandleNavigation(){
+        setVis(false)
         if(title === 'User Action'){
             navigation.navigate('Home')
         }else{

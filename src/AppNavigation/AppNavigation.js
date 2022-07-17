@@ -16,6 +16,7 @@ import MajorIncidents from '../../src/Screens/MajorIncidents';
 import More from '../Screens/More';
 import Resolved from '../Screens/Resolved';
 import EOD from '../Screens/EOD';
+import Settings from '../Screens/Settings';
 
 //atom for global state 
 import { useAtom } from 'jotai';
@@ -109,6 +110,9 @@ export default function AppNavigation(){
             </Stack.Screen>
             <Stack.Screen name="MajorIncidents">
                 {props => <MajorIncidents {...props} />}
+            </Stack.Screen>
+            <Stack.Screen name="Settings">
+                {props => <Settings {...props} />}
             </Stack.Screen>
             <Stack.Screen name="Resolved">
                 {props => <Resolved {...props} />}

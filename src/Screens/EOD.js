@@ -17,101 +17,105 @@ const {width, height } = Dimensions.get("window");
 
 export default function EOD({navigation}){
 
+    const testArr = [
+        {
+            id:1,
+            date:'Monday 26',
+            activities:[
+                {
+                    act:55,
+                    isEnabled:false,
+                    sub_activites:[
+    
+                        {
+                            sub_id:12,
+                            parentAct:55
+                        }
+                    ]
+                },
+                {
+                    act:2,
+                    isEnabled:false,
+                    sub_activites:[
+    
+                        {
+                            sub_id:41,
+                            parentAct:2
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            id:2,
+            date:'Tuesday 27',
+            activities:[
+                {
+                    act:11,
+                   
+                    isEnabled:false,
+                    sub_activites:[
+    
+                        {
+                            sub_id:99,
+                            parentAct:11
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            id:3,
+            date:'wednesday 27',
+            activities:[
+                {
+                    act:14,
+                   
+                    isEnabled:false,
+                    sub_activites:[
+    
+                        {
+                            sub_id:234,
+                            parentAct:14
+                        }
+                    ]
+                },
+                {
+                    act:22,
+                
+                    isEnabled:false,
+                    sub_activites:[
+    
+                        {
+                            sub_id:2341,
+                            parentAct:22
+                        }
+                    ]
+                },
+                {
+                    act:35,
+                    
+                    isEnabled:false,
+                    sub_activites:[
+    
+                        {
+                            sub_id:7412,
+                            parentAct:35
+                        }
+                    ]
+                }
+            ]
+        },
+      ]
+    
+    
+      
    
     const [current_activity,setActivity] =useState({});
     const [listOrder,setOrder] = useState(true);
     const [gridOrder,setGrid] = useState(false);
-
-  const testArr = [
-    {
-        id:1,
-        date:'Monday 26',
-        activities:[
-            {
-                act:55,
-                isEnabled:false,
-                sub_activites:[
-
-                    {
-                        sub_id:12,
-                        parentAct:55
-                    }
-                ]
-            },
-            {
-                act:2,
-                isEnabled:false,
-                sub_activites:[
-
-                    {
-                        sub_id:41,
-                        parentAct:2
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        id:2,
-        date:'Tuesday 27',
-        activities:[
-            {
-                act:11,
-               
-                isEnabled:false,
-                sub_activites:[
-
-                    {
-                        sub_id:99,
-                        parentAct:11
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        id:3,
-        date:'wednesday 27',
-        activities:[
-            {
-                act:14,
-               
-                isEnabled:false,
-                sub_activites:[
-
-                    {
-                        sub_id:234,
-                        parentAct:14
-                    }
-                ]
-            },
-            {
-                act:22,
-            
-                isEnabled:false,
-                sub_activites:[
-
-                    {
-                        sub_id:2341,
-                        parentAct:22
-                    }
-                ]
-            },
-            {
-                act:35,
-                
-                isEnabled:false,
-                sub_activites:[
-
-                    {
-                        sub_id:7412,
-                        parentAct:35
-                    }
-                ]
-            }
-        ]
-    },
-  ]
+    const [sorted,setSorted] =useState(false);
+    const [activites_days,setActivites] =useState(testArr);
 
   const typeOfOrder =(type)=>{
     if(type === 'list'){
@@ -122,6 +126,117 @@ export default function EOD({navigation}){
         setGrid(true)
     }
  }
+
+
+ function sortActivities(){
+
+    if(!sorted){
+        const newArray=[];
+        const firstElement = testArr[0];
+        testArr.forEach(() => {
+    
+            newArray.push(testArr.pop());
+            
+        });
+        newArray.push(firstElement);
+
+        
+        setActivites(newArray);
+        setSorted(true);
+        console.log(newArray);
+
+
+    
+    }else{
+
+        const newArray=[];
+        const firstElement = testArr[0];
+        testArr.forEach(() => {
+    
+            newArray.push(testArr.shift());
+            
+        });
+        newArray.push(firstElement);
+
+        
+        setActivites(newArray);
+        setSorted(false);
+        console.log(newArray);
+
+    }
+
+
+ }
+
+ function getSortedArray(array){
+
+    return(
+        array.map(element => {
+            console.log(array);
+            return (
+                <View style={styles.widget}>
+                    <View style={styles.internal_view}>
+                        
+                        <View style={styles.widget_header}>
+                            <Text style={styles.widget_txt}>{element.date}</Text>
+                            <View style={styles.line}></View>
+                        </View>
+                        {/** this block should be in loop */}
+                        {/** the view that holds the EOD activity info */}
+                        {element.activities.map(activity=>{
+
+                            
+                                return(
+                                    <View style={styles.activities_holder}> 
+                                    <View style={styles.activity_container}>
+                                            <View style={styles.activity_time_container}>
+                                                <Text>12:30</Text>
+                                                <Text>pm</Text>
+                                            </View>
+
+                                            <TouchableOpacity style={current_activity.isEnabled && current_activity.act == activity.act? styles.activity_row2 : styles.activity_row}
+                                            onPress={()=>{
+                                                activity.isEnabled=true;
+                                                setActivity(activity);
+                                            }}
+
+                                            >
+                                                <View style={styles.row_info}>
+                                                { renderCountryImage('JO')}
+                                                <View style={styles.activity_txt_container}>
+                                                    <Text style={styles.row_info_txt}> CASHIER(2)</Text>
+                                                    <Text style={styles.row_info_txt2}> 2 min</Text>   
+                                                </View>
+                                                </View>
+                                                
+                                            </TouchableOpacity>
+                                            
+                                            
+                                    </View>
+                                    {activity.sub_activites.map(item =>{
+                                        if(current_activity.isEnabled && current_activity.act == item.parentAct){
+                                            console.log(item.parentAct);
+                                            return onActivityClicked(current_activity,true)
+                                        }else{
+                                            return onActivityClicked({},false)
+                                        }
+                                    })}
+                                    </View>
+                                )
+
+
+                        })}
+                        
+                            {/** this block should be in loop */}
+                    </View>
+                </View> );
+            
+            })
+
+    )
+
+ }
+
 
     return(
    
@@ -144,7 +259,7 @@ export default function EOD({navigation}){
                          {handleGrid(gridOrder)}
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity style={styles.sort_btn}>
+                    <TouchableOpacity style={styles.sort_btn} onPress={()=>{sortActivities()}}>
                          <FontAwesome5 name="sort" size={15} color={"#757575"} style={styles.tools_icons_1}/>
                     </TouchableOpacity>
                 </View>
@@ -153,67 +268,7 @@ export default function EOD({navigation}){
                 <View style={styles.eod_container}>
                     <ScrollView showsVerticalScrollIndicator={false}>
 
-                       {testArr.map(element => {
-                       
-                        return (
-                            <View style={styles.widget}>
-                                <View style={styles.internal_view}>
-                                   
-                                    <View style={styles.widget_header}>
-                                        <Text style={styles.widget_txt}>{element.date}</Text>
-                                        <View style={styles.line}></View>
-                                    </View>
-                                     {/** this block should be in loop */}
-                                      {/** the view that holds the EOD activity info */}
-                                      {element.activities.map(activity=>{
-
-                                        
-                                            return(
-                                               <View style={styles.activities_holder}> 
-                                                <View style={styles.activity_container}>
-                                                        <View style={styles.activity_time_container}>
-                                                            <Text>12:30</Text>
-                                                            <Text>pm</Text>
-                                                        </View>
-            
-                                                        <TouchableOpacity style={current_activity.isEnabled && current_activity.act == activity.act? styles.activity_row2 : styles.activity_row}
-                                                         onPress={()=>{
-                                                            activity.isEnabled=true;
-                                                            setActivity(activity);
-                                                         }}
-
-                                                        >
-                                                            <View style={styles.row_info}>
-                                                            { renderCountryImage('JO')}
-                                                            <View style={styles.activity_txt_container}>
-                                                                <Text style={styles.row_info_txt}> CASHIER(2)</Text>
-                                                                <Text style={styles.row_info_txt2}> 2 min</Text>   
-                                                            </View>
-                                                            </View>
-                                                            
-                                                        </TouchableOpacity>
-                                                       
-                                                        
-                                                </View>
-                                                {activity.sub_activites.map(item =>{
-                                                    if(current_activity.isEnabled && current_activity.act == item.parentAct){
-                                                        console.log(item.parentAct);
-                                                        return onActivityClicked(current_activity,true)
-                                                    }else{
-                                                        return onActivityClicked({},false)
-                                                    }
-                                                })}
-                                                </View>
-                                            )
-
-
-                                      })}
-                                   
-                                       {/** this block should be in loop */}
-                                </View>
-                             </View> );
-                        
-                       })} 
+                      {getSortedArray(activites_days)}
                         
                     </ScrollView>
 
