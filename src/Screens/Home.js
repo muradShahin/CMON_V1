@@ -1,5 +1,5 @@
 import React from "react";
-import {ScrollView, Text, View,Image} from "react-native";
+import {ScrollView, Text, View,Image,Dimensions, TouchableOpacity} from "react-native";
 import { StyleSheet } from "react-native";
 
 //header section
@@ -7,7 +7,7 @@ import Header from "./Header/Header";
 
 //import constans from expo constans
 import  Constants  from "expo-constants";
-
+import { LogBox } from 'react-native';
 
 //tab bar
 
@@ -23,14 +23,140 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Foundation from 'react-native-vector-icons/Foundation';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
+
+
+//atom for global state 
+import { useAtom } from 'jotai';
+import { modalVisibility ,modalAlert,userActionVisibility } from "../GlobalState/atom";
+
+
+import Modal from "react-native-modalbox";
+
 const Tab = createMaterialTopTabNavigator();
 
 
 
 
-
+const {width, height } = Dimensions.get("window");
 
 export default function Home({navigation,AppState}){
+
+    const [modalVis,setVisibilty] = useAtom(modalVisibility);
+    const [userActionVis,setUserActionVis] = useAtom(userActionVisibility);
+    const[alert,setAlert] = useAtom(modalAlert);
+
+    LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+    LogBox.ignoreAllLogs();//Ignore all log notifications
+
+      /**
+     * handling bottom sheet screen
+     */
+       const getModal = () =>{
+        return (
+          <Modal
+            entry="bottom"
+            backdropPressToClose={true}
+            isOpen={modalVis}
+            style={styles.modalBox}
+            onClosed={() => setVisibilty(false)}
+            useNativeDriver={true}
+          >
+            <View style={styles.content}>
+                <ScrollView style={styles.scrollView}>
+                       {/** First Row - parent */}
+                        <View style={styles.modalRow1}>
+                                {/** child row 1 */}
+                                <View style={styles.chid_row1}>
+                                       {/* <Image source={require('../img/jo_round.png')} />*/}
+                                       {renderCountryImage(alert.country)}
+                                        <View style={styles.child_row1_child}>
+                                             <Text style={styles.modal_text}>{alert.title}</Text>
+                                             <Text style={styles.modal_text}>ID {alert.alertId}</Text>
+                                        </View>                    
+                                </View>
+                                {/** child row 2 */}
+                                <View style={styles.child_row2}>
+                                     <Foundation  name={'info'} size={30} color={'#fdd835'}/>
+                                    <Text style={styles.child_row2_text}>Warning</Text>
+                               </View>
+                        </View>
+                        
+                         {/** Second_row_2 */}
+                         <View style={styles.second_row_2}>
+                                <Text style={styles.second_row_2_txt}>Started</Text>
+                                <Text style={styles.second_row_2_txt_2}>14-04-2022 04:32:01</Text>
+                         </View>
+
+                         {/** 3rd Row 3 */}
+                         <View style={styles.third_row_3}>
+                                    <View style={styles.third_row_3_child}>
+                                         <Text style={styles.second_row_2_txt}>System</Text>
+                                         <Text style={styles.rows_txt_other}>CLOUDERA</Text>
+                                    </View>
+
+                                    <View style={styles.third_row_3_child}>
+                                         <Text style={styles.second_row_2_txt}>Task Type</Text>
+                                         <Text style={styles.rows_txt_other}>OS</Text>
+                                    </View>
+                         </View>
+                        
+                        {/** 4th Row 4 */}
+                         <View style={styles.second_row_2}>
+                                <Text style={styles.second_row_2_txt}>Category</Text>
+                                <Text style={styles.rows_txt_other}>Infrastructure</Text>
+                         </View>
+
+                        {/** 5th Row 5 */}
+                        <View style={styles.modalLastRow}>
+                                <Text style={styles.second_row_2_txt}>Description</Text>
+                                <Text style={styles.rows_txt_other}>Text</Text>
+                        </View>
+                       
+                </ScrollView>
+            </View>
+          </Modal>
+        ); 
+    };
+
+    {/** user actions */}
+
+    const UserActionModal = () =>{
+        return (
+          <Modal
+            entry="bottom"
+            backdropPressToClose={true}
+            isOpen={userActionVis}
+            style={styles.modalBox}
+            onClosed={() => setUserActionVis(false)}
+             useNativeDriver={true}
+          >
+            <View style={styles.content2}>
+             
+              <TouchableOpacity  style={styles.UserActionRow} onPress={()=> navigation.navigate('MajorIncidents')}>
+              <Foundation  name={'info'} size={30} color={'#0077c2'}/>
+                <Text style={styles.UserActionRow_txt}>MajorIncidents</Text>
+              </TouchableOpacity>
+              <TouchableOpacity  style={styles.UserActionRow} onPress={()=> navigation.navigate('EOD')}>
+              <Foundation  name={'info'} size={30} color={'#0077c2'}/>
+                <Text style={styles.UserActionRow_txt}>End Of The Day (EOD)</Text>
+              </TouchableOpacity>
+              <TouchableOpacity  style={styles.UserActionRow_last} onPress={()=> navigation.navigate('MajorIncidents')}>
+              <Foundation  name={'info'} size={30} color={'#0077c2'}/>
+                <Text style={styles.UserActionRow_txt}>Settings</Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+        ); 
+    };
+
+    function renderCountryImage(country){
+        switch(country){
+            case 'JO':
+                return (<Image source={require('../img/jo_round.png')} />)
+            case 'EG':
+                return (<Image source={require('../img/eg_round.png')}/>)
+        }
+    }
 
     return(
       
@@ -52,6 +178,7 @@ export default function Home({navigation,AppState}){
                                 <Tab.Screen name="MB" component={MB} />
                                 <Tab.Screen name="ATM" component={Atm} />
                                 <Tab.Screen name="CMGT" component={CMGT} />
+                                
                             </Tab.Navigator>
                 </View>
 
@@ -62,26 +189,29 @@ export default function Home({navigation,AppState}){
 
                     <Text style={styles.todays_summary_txt}>Today's Summary</Text>
                     <View style={styles.first_row}>
-                                        
-                            <View key={"resolved"} style={styles.resolvedView}>
-                                  <Text style={styles.resolved_title}>Resolved</Text>
-                                  <View key={"l1"} style={styles.resolved_l1}>
-                                        
 
-                                        {/** layer 2 - A */}
-                                        <View style={styles.resolved_elements}>
-                                            <Ionicons style={styles.icon_l1} name={'md-warning-sharp'} size={20} color={'#e53935'}/>
-                                            <Text style={styles.txt_l1}>10</Text>
-                                        </View>
+                                    
+                             <View key={"resolved"} style={styles.resolvedView}>
+                                <TouchableOpacity onPress={()=>{navigation.navigate('Resolved')}}>
+                                    <Text style={styles.resolved_title}>Resolved</Text>
+                                    <View key={"l1"} style={styles.resolved_l1}>
+                                            
 
-                                        <View style={styles.resolved_elements}>
-                                            <Foundation style={styles.icon_l1} name={'info'} size={20} color={'#fdd835'}/>
-                                            <Text style={styles.txt_l1}>14</Text>
-                                        </View>
-                                  </View>
+                                            {/** layer 2 - A */}
+                                            <View style={styles.resolved_elements}>
+                                                <Ionicons style={styles.icon_l1} name={'md-warning-sharp'} size={20} color={'#e53935'}/>
+                                                <Text style={styles.txt_l1}>10</Text>
+                                            </View>
 
+                                            <View style={styles.resolved_elements}>
+                                                <Foundation style={styles.icon_l1} name={'info'} size={20} color={'#fdd835'}/>
+                                                <Text style={styles.txt_l1}>14</Text>
+                                            </View>
+                                    </View>
 
-                            </View>
+                                    </TouchableOpacity>
+                                </View>
+                            
                             
                             <View key={"planned"} style={styles.planned_view}>
                                         <Text style={styles.planned_txt}>Planned</Text>
@@ -275,6 +405,8 @@ export default function Home({navigation,AppState}){
          
 
             </View>
+            {getModal()}
+            {UserActionModal()}
 
         </View>
  
@@ -296,7 +428,7 @@ const styles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'center',
         flex:1,
-        paddingTop:Constants.statusBarHeight,
+        marginTop:Constants.statusBarHeight,
         backgroundColor:'white'
     },
     body:{
@@ -521,8 +653,174 @@ const styles = StyleSheet.create({
         borderRadius:5,
         borderColor:'white'
 
-    }
+    },
+    modalBox: {
+        overflow: "hidden",
+        alignItems: "center",
+        justifyContent: "center",
+        height:height,
+        width,
+        backgroundColor:'transparent'
+      },
+      content: {
+        position: "absolute",
+        bottom: 0,
+        width,
+        height: '65%',
+        borderTopLeftRadius: 20,
+        justifyContent: "center",
+        alignItems: "center",
+        borderTopRightRadius: 20,
+        backgroundColor: "white"
+      
     
+    },modalRow1:{
+        width:'90%',
+        height:80,
+        margin:10,
+        flexDirection:'row',
+        borderBottomWidth:2,
+        borderBottomColor:'#bbdefb'
+    
+    },chid_row1:{
+        width:'40%',
+        margin:20,
+        flexDirection:'row',
+        alignContent:'center',
+        alignItems:'center',
+        borderEndWidth:2,
+        borderEndColor:'#bbdefb',
+
+        
+    },child_row1_child:{
+
+
+        flexDirection:'column',
+        alignContent:'center',
+        alignContent:'center',
+        justifyContent:'center',
+        marginEnd:10,
+        marginStart:10,
+    
+    
+    },modal_text:{
+
+        fontSize:13,
+        fontWeight:'bold',
+        color:'black',
+        padding:4
+
+    },child_row2:{
+
+        width:'40%',
+        margin:20,
+        flexDirection:'row',
+        alignContent:'center',
+        alignItems:'center',
+        justifyContent:'center'
+    
+    },child_row2_text:{
+        fontSize:18,
+        padding:6,
+        fontWeight:'bold'
+   
+    },second_row_2:{
+        width:'90%',
+        height:60,
+        margin:10,
+        marginTop:0,
+        alignContent:'flex-start',
+        alignItems:'flex-start',
+        justifyContent:'flex-start',
+        borderBottomWidth:2,
+        borderBottomColor:'#bbdefb'
+    },second_row_2_txt:{
+        fontSize:12,
+        color:'#bdbdbd',
+        fontWeight:'bold',
+        padding:5
+
+    },second_row_2_txt_2:{
+        fontSize:12,
+        color:'#1b1b1b',
+        fontWeight:'bold',
+        padding:5
+    
+    },third_row_3:{
+        width:'90%',
+        height:60,
+        flexDirection:'row',
+        margin:10,
+        marginTop:0,
+        alignContent:'flex-start',
+        alignItems:'flex-start',
+        justifyContent:'flex-start',
+        borderBottomWidth:2,
+        borderBottomColor:'#bbdefb',
+    
+    },third_row_3_child:{
+        width:'50%',
+        flexDirection:'column',
+        alignContent:'center',
+        alignItems:'flex-start',
+        justifyContent:'center',
+
+    },rows_txt_other:{
+        fontSize:14,
+        color:'#1b1b1b',
+        fontWeight:'bold',
+        padding:5
+
+    },modalLastRow:{
+        width:'90%',
+        height:60,
+        margin:10,
+        marginTop:0,
+        alignContent:'flex-start',
+        alignItems:'flex-start',
+        justifyContent:'flex-start',
+    },
+      content2: {
+        position: "absolute",
+        bottom: 0,
+        width,
+        height: '40%',
+        borderTopLeftRadius: 20,
+        justifyContent:'flex-start',
+        alignItems: "center",
+        borderTopRightRadius: 20,
+        backgroundColor:'#90caf9'
+      
+    
+    },
+    UserActionRow:{
+        flexDirection:'row',
+        width:'80%',
+        height:80,
+        paddingTop:8,
+        alignContent:'flex-start',
+        alignItems:'center',
+        justifyContent:'flex-start',
+        borderBottomWidth:2,
+        borderBottomColor:'#64b5f6'
+    },
+    UserActionRow_last:{
+        flexDirection:'row',
+        width:'80%',
+        height:80,
+        paddingTop:8,
+        alignContent:'flex-start',
+        alignItems:'center',
+        justifyContent:'flex-start',
+        borderBottomWidth:0,
+        borderBottomColor:'#64b5f6'
+    },
+    UserActionRow_txt:{
+        color:'#0077c2',
+        paddingEnd:20,
+        paddingStart:20,
+        fontWeight:'bold'
+    }
 
 
 });

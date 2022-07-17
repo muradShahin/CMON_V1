@@ -1,13 +1,114 @@
 import React from "react";
-import {Text} from "react-native";
+import {Text,ScrollView, Image} from "react-native";
 import { StyleSheet } from "react-native";
 import { View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
+import Foundation from 'react-native-vector-icons/Foundation';
+import { useAtom } from 'jotai';
+import { modalVisibility,modalAlert} from '../../GlobalState/atom';
+
+import  { useState, useEffect } from 'react';
 
 export default function Alerts({navigatio,AppState}){
+
+    const [alerts,setAlerts] = useState([{}]);
+    const [alertsCount,setCount] = useState(0);
+   
+    const[alert,setAlert] = useAtom(modalAlert);
+    const[modalVis,setVisibilty]=useAtom(modalVisibility);
+   
+
+  //  const {width, height } = Dimensions.get("window");
+
+    useEffect(() => {
+           
+          setCount(getAlertsCount());
+          setAlerts(getAlerts());
+           console.log(alertsCount)
+        }, [])
+
+
+    function getAlerts(){
+
+        return [
+            {
+                id:1421,
+                title:'CASHIER(2)',
+                severity:'critical',
+                time:'2 min',
+                country:'JO',
+                details:[{
+                    detail:"(CASHIR_SRV) ISSAM YASSINE -LB00 -JDT07"
+                }]
+            },
+            {
+                id:4202,
+                title:'CASHIER(2)',
+                severity:'mid',
+                time:'2 min',
+                country:'JO',
+                details:[{
+                    detail:"(CASHIR_SRV) ISSAM YASSINE -LB00 -JDT07"
+                }]
+            },
+            {
+                id:1273,
+                title:'Payments',
+                severity:'mid',
+                time:'2 min',
+                country:'EG',
+                details:[{
+                    detail:"(CASHIR_SRV) ISSAM YASSINE -LB00 -JDT07"
+                }]
+            },
+            {
+                id:4088,
+                title:'ATM',
+                severity:'mid',
+                time:'2 min',
+                country:'EG',
+                details:[{
+                    detail:"(CASHIR_SRV) ISSAM YASSINE -LB00 -JDT07"
+                }]
+            }
+            ];
+    }
+
+    function getAlertsCount(){
+
+        return 2;
+    }
+
+
+  
+
+
+    function renderCountryImage(country){
+        switch(country){
+            case 'JO':
+                return (<Image source={require('../../img/jo_round.png')} style={styles.countries_img}/>)
+            case 'EG':
+                return (<Image source={require('../../img/eg_round.png')} style={styles.countries_img}/>)
+        }
+    }
+
+
+    function renderImageSevirity(severity){
+
+        switch(severity){
+
+            case 'critical':
+                return <Ionicons style={styles.icon_l1} name={'md-warning-sharp'} size={20} color={'#e53935'}/>
+            case 'mid':
+                return <Foundation style={styles.icon_l1} name={'info'} size={20} color={'#ffca28'}/>
+
+
+        }
+
+    }
 
     return(
         <View style={styles.body}>
@@ -56,18 +157,55 @@ export default function Alerts({navigatio,AppState}){
                 </View>
 
                 {/* smiling face in case no alerts*/}
+
+              {alertsCount == 0 ? 
+                    
                 <View style={styles.smiling}>
 
-                    
-
                         <Fontisto style={styles.icon_check} name={'smiley'} size={70} color={'#4b830d'} />
-                        <Text style={styles.no_alerts}>No Alerts</Text>
+                        <Text style={styles.no_alerts}>No Alerts {alertsCount}</Text>
                     
-                    
 
-                </View>
+                </View> :   <View style={styles.alerts_exist_view}>
+                                <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+                                    {alerts.map(alert=>{
+                                        
+                                        return (
+                                            <TouchableOpacity key={alert.id} 
+                                                            onPress={()=>{
+                                                                setVisibilty(true);
+                                                                setAlert({
+                                                                    alertId:alert.id,
+                                                                    country:alert.country,
+                                                                    title:alert.title,
+                                                                    time:alert.time,
+                                                                    severity:alert.severity
+                                                                })
+                                                            }}
+                                            >
+                                                <View key={alert.id} 
+                                                    style={alert.severity === 'critical' ? 
+                                                    styles.alert_view_row : styles.alert_view_row2} 
+                                                    
+                                                    >
+                                                    {renderCountryImage(alert.country)}
+                                                    <Text style={styles.alert_row_title}>{alert.title}</Text>
+                                                    <View style={styles.alert_row_last_part}>
+                                                        <Text style={styles.alert_row_last_txt}>{alert.time}</Text>
+                                                        {renderImageSevirity(alert.severity)}
+                                                    </View>
 
+                                                </View>
+                                            </TouchableOpacity>
+                                            
+                                        )
 
+                                    })}
+                                    
+                               </ScrollView>
+                           </View>
+
+                }
             </View>
            
         </View>
@@ -131,7 +269,8 @@ const styles = StyleSheet.create({
     },
     icon_check:{
         marginEnd:4,
-        marginStart:4
+        marginStart:4,
+        padding:4
     },
     part1_alert1:{
         flexDirection:'row',
@@ -216,7 +355,66 @@ const styles = StyleSheet.create({
     },blueTextAlert:{
         color:'#0277bd',
         fontSize:16
+    
+    
+    },alerts_exist_view:{
+        width:'100%',
+        height:'70%',
+        borderBottomEndRadius:10,
+        borderBottomStartRadius:10,
+        padding:10,
+        alignItems:'flex-start',
+        justifyContent:'flex-start',
+    
+    },alert_view_row:{
+
+        width:'100%',
+        height:50,
+        backgroundColor:'#ffa4a2',
+        padding:10,
+        flexDirection:'row',
+        alignContent:'center',
+        alignItems:'center',
+        justifyContent:'flex-start'
+        
+
+    },alert_view_row2:{
+
+        width:'100%',
+        height:50,
+        backgroundColor:'#ffecb3',
+        padding:10,
+        flexDirection:'row',
+        alignContent:'center',
+        alignItems:'center',
+        justifyContent:'flex-start'
+        
+
+    },scrollView:{
+        width:'100%',
+     
+    },countries_img:{
+        height:30,
+        width:30,
+
+    },alert_row_title:{
+        marginStart:20,
+        color:'#1b1b1b',
+        fontWeight:'bold',
+        width:'65%'
+    
+    },alert_row_last_part:{
+        flexDirection:'column',
+        alignItems:'center',
+        alignContent:'center',
+        justifyContent:'center',
+        width:'15%',
+        
+    },alert_row_last_txt:{
+        fontSize:11,
+        color:'#424242'
     }
+
 
 
 });
