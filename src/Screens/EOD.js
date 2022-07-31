@@ -150,7 +150,7 @@ export default function EOD({navigation}){
     }else{
 
         const newArray=[];
-        const firstElement = testArr[0];
+        const firstElement = testArr[1];
         testArr.forEach(() => {
     
             newArray.push(testArr.shift());
